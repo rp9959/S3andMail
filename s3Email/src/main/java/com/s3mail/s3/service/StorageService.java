@@ -25,13 +25,11 @@ public class StorageService {
     @Autowired
     private AmazonS3 s3Client;
 
-    public String uploadFile(MultipartFile file) {
-        File fileObj = convertMultiPartFileToFile(file);
-        
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        s3Client.putObject(new PutObjectRequest(bucketName, "rahul/"+fileName, fileObj));
-        s3Client.putObject(new PutObjectRequest(bucketName, "r239/"+fileName, fileObj));
-
+    public String uploadFile(MultipartFile file, String username) {
+        File fileObj = convertMultiPartFileToFile(file);    
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();      
+        s3Client.putObject(new PutObjectRequest(bucketName, username+"/"+fileName, fileObj));     
+        String url = getDownloadLink(bucketName, username+"/"+fileName);
         fileObj.delete();
         return "File uploaded : " + fileName;
     }
