@@ -3,6 +3,7 @@ package com.s3mail.s3.controller;
 
 import com.s3mail.s3.service.EmailService;
 import com.s3mail.s3.service.StorageService;
+import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
@@ -20,15 +21,20 @@ public class StorageController {
     @Autowired
     private EmailService emailservice;
 
-    @PostMapping("/uploadandmail/{username}")
-    public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file,@PathVariable String username)
+    @PostMapping("/uploadAndEmail/{username}")
+    public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file,@PathVariable String username) throws InterruptedException
     {
-    	String url = service.uploadFile(file,username);
+    	try {
+    	String url = service.uploadFile(file,username); 
+    	TimeUnit.SECONDS.sleep(1);
+    	emailservice.sendmail(username,url);   	
+        return new ResponseEntity<>( HttpStatus.OK);}
     	
-    	emailservice.sendmail(username,url);
+    	catch (Exception e)
+    	{
+    		return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
     	
-    	
-        return new ResponseEntity<>( HttpStatus.OK);
     }
     
 
