@@ -1,6 +1,7 @@
 package com.s3mail.s3.controller;
 
 
+import com.s3mail.s3.service.EmailService;
 import com.s3mail.s3.service.StorageService;
 import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,9 @@ public class StorageController {
 
     @Autowired
     private StorageService service;
+    
+    @Autowired
+    private EmailService emailservice;
 
     @PostMapping("/uploadAndEmail/{username}")
     public ResponseEntity<String> uploadFile(@RequestParam(value = "file") MultipartFile file,@PathVariable String username) throws InterruptedException
@@ -32,6 +36,9 @@ public class StorageController {
     	}
     	
     }
+    
+
+
 
     @GetMapping("/download/{fileName}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable String fileName) {
